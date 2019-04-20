@@ -415,6 +415,11 @@ public class Sudoku extends LatinSquare {
 
 		HashSet<Integer> ValidCellValues = new HashSet<Integer>();
 
+		if (getPuzzle()[iRow][iCol] > 0) {
+			ValidCellValues.add(getPuzzle()[iRow][iCol]);
+			return ValidCellValues;
+		}
+
 		for (int i = 1; i < iSize + 1; i++) {
 			if (isValidValue(iRow, iCol, i)) {
 				ValidCellValues.add(i);
@@ -446,14 +451,13 @@ public class Sudoku extends LatinSquare {
 		for (int value : c.getLstValidValues()) {
 			if (isValidValue(c, value)) {
 				getPuzzle()[c.getiRow()][c.getiCol()] = value;
+
+				if (fillRemaining​(c.GetNextCell(c))) {
+					return true;
+				}
+				getPuzzle()[c.getiRow()][c.getiCol()] = 0;
 			}
 		}
-
-		if (fillRemaining​(c.GetNextCell(c))) {
-			return true;
-		}
-
-		getPuzzle()[c.getiRow()][c.getiCol()] = 0;
 
 		return false;
 	}
@@ -498,37 +502,42 @@ public class Sudoku extends LatinSquare {
 		}
 
 		public void setlstValidValues(HashSet<Integer> hsValidValues) {
-			ArrayList<Integer> list = new ArrayList<Integer>(hsValidValues);
-			this.lstValidValues = list;
+			lstValidValues = new ArrayList<Integer>(hsValidValues);
 		}
 
 		public void ShuffleValidValues() {
 			Collections.shuffle(this.lstValidValues);
 		}
 
-		public Sudoku.Cell GetNextCell(Sudoku.Cell c) {
+		public Cell GetNextCell(Cell c) {
 			int iRow = c.getiRow();
-			int iCol = c.getiCol();
-			int iRowNext;
-			int iColNext;
-			Sudoku.Cell nextCell;
-			Integer key;
+			int iCol = c.getiCol() + 1;
 
-			if ((iRow == iSize - 1) && (iCol == iSize - 1)) {
-				return null;
-			} else if (iCol == iSize - 1) {
-				iColNext = 0;
-				iRowNext = iRow + 1;
-			} else {
-				iColNext = iCol + 1;
-				iRowNext = iRow;
+			if ((iRow < iSize - 1) && (iCol >= iSize)) {
+				iCol = 0;
+				iRow += 1;
 			}
-
-			nextCell = new Cell(iRowNext, iColNext);
-			key = nextCell.hashCode();
-
-			nextCell = cells.get(key);
-			return nextCell;
+			if (iRow >= iSize && iCol >= iSize) {
+				return null;
+			}
+			if (iRow < iSqrtSize) {
+				if (iCol < iSqrtSize) {
+					iCol = iSqrtSize;
+				}
+			} else if (iRow < iSize - iSqrtSize) {
+				if (iCol == (int) (iRow / iSqrtSize) * iSqrtSize) {
+					iCol = iCol + iSqrtSize;
+				}
+			} else {
+				if (iCol == iSize - iSqrtSize) {
+					iRow += 1;
+					iCol = 0;
+					if (iRow >= iSize) {
+						return null;
+					}
+				}
+			}
+			return cells.get(Objects.hash(iRow, iCol));
 		}
 	}
 }

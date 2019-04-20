@@ -31,7 +31,6 @@ public class SudokuTest {
 	public void Sudoku_Test2() throws Exception {
 
 		Sudoku s1 = new Sudoku(10);
-
 	}
 
 	@Test
@@ -116,7 +115,6 @@ public class SudokuTest {
 		try {
 			Sudoku s1 = new Sudoku(puzzle);
 			assertFalse(s1.isSudoku());
-
 		} catch (Exception e) {
 			fail("Test failed to build a Sudoku");
 		}
@@ -129,11 +127,10 @@ public class SudokuTest {
 		try {
 			Sudoku s1 = new Sudoku(9);
 			s1.PrintPuzzle();
-			assertTrue(isSudoku(s1));
+			assertTrue(s1.isSudoku());
 		} catch (Exception e) {
 			fail("Test failed to build a Sudoku");
 		}
-
 	}
 
 	private boolean isSudoku(Sudoku s1) {
